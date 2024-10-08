@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.views.generic import ListView
-from .models import Ingredient, MenuItem, Purchase, RecipeRequirement
+from .models import Ingredient, MenuItem, RecipeRequirement, Purchase
 
 
 #Ingredient view: An inventory of different Ingredients, their available quantity, and their prices per unit
@@ -16,6 +16,13 @@ class MenuList(ListView):
     context_object_name = 'menu_items'
 
 
+#Ingredients view: A list of the ingredients that each menu item requires (RecipeRequirements)
+def recipe_list(request):
+    menu_items = MenuItem.objects.prefetch_related('reciperequirement_set')
+
+    recipes = [(menu_item, RecipeRequirement.objects.filter(menu_item=menu_item)) for menu_item in menu_items]
+    
+    return render(request, 'inventory/recipes.html', {'recipes': recipes})
 
 #TODO class PurchaseCreate(CreateView):
 '''
