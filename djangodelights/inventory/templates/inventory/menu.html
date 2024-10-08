@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'inventory/base.html' %}
 
 {% block title %}
 Menu
@@ -6,4 +6,20 @@ Menu
 
 {% block content %}
 <h1>Django Delights Menu:</h1>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Menu item</th>
+            <th>Price</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for menu_item in menu_items %}
+        <tr>
+            <td>{{ menu_item.name }}</td>
+            <td>{{ menu_item.price }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
 {% endblock %}
