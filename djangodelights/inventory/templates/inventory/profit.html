@@ -1,0 +1,29 @@
+{% extends 'inventory/base.html' %}
+
+{% block title %}
+Profit & Loss 
+{% endblock %}
+
+{% block content %}
+<h1>{{ profit_data.0.year }} Profit & Loss:</h1>
+<table class="table">
+    <thead>
+        <tr>
+            <th> </th>  <!--intentionally left blank-->
+            <th>Revenue</th>
+            <th>Expenses</th>
+            <th>Profit</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for reported_month in profit_data %}
+        <tr>
+            <td>{{ reported_month.month }}</td>
+            <td>{{ reported_month.revenue }}</td>
+            <td>{{ reported_month.cost }}</td>
+            <td>{{ reported_month.profit }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
