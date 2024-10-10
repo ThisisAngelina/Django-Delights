@@ -1,7 +1,9 @@
 from django.shortcuts import render
 from django.views.generic import ListView
+from django.views.generic.edit import UpdateView
 from .models import Ingredient, MenuItem, RecipeRequirement, Purchase
 from datetime import datetime
+from django.urls import reverse_lazy
 
 
 #Ingredient view: An inventory of different Ingredients, their available quantity, and their prices per unit
@@ -9,6 +11,13 @@ class InventoryList(ListView):
     model = Ingredient
     template_name = 'inventory/inventory.html' 
     context_object_name = 'ingredients'
+
+#Update inventory view: allows the restaurant owner to change the quantity of the ingredient manually (if an ingredient goes bad or if the restaurant get a supply of the ingredients)
+class InventoryUpdateView(UpdateView):
+    model = Ingredient
+    fields = '__all__'
+    template_name = 'inventory/inventory_update.html'
+    success_url = reverse_lazy('inventory')
 
 #Recipes view: A list of the restaurant’s MenuItems, and the price set for each entry
 class MenuList(ListView):
@@ -60,6 +69,9 @@ def profit_view(request):
             'profit': profit
         } )
     return render(request, 'inventory/profit.html', {'profit_data': profit_data})
+
+
+
 
 
 

@@ -8,6 +8,7 @@
             <th>Ingredient</th>
             <th>Quantity (units)</th>
             <th>Price per unit</th>
+            <th>Manage</th>
         </tr>
     </thead>
     <tbody>
@@ -16,6 +17,7 @@
             <td>{{ ingredient.name }}</td>
             <td>{{ ingredient.quantity }}</td>
             <td>{{ ingredient.price }}</td>
+            <td><a class="nav-link" href="{% url 'inventory_update' ingredient.pk %}">Manage</a></td>
         </tr>
         {% endfor %}
     </tbody>
