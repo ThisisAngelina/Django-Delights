@@ -19,10 +19,17 @@ class MenuList(ListView):
 #Ingredients view: A list of the ingredients that each menu item requires (RecipeRequirements)
 def recipe_list(request):
     menu_items = MenuItem.objects.prefetch_related('reciperequirement_set')
-
     recipes = [(menu_item, RecipeRequirement.objects.filter(menu_item=menu_item)) for menu_item in menu_items]
-    
     return render(request, 'inventory/recipes.html', {'recipes': recipes})
+
+#Purchases view: A log of all Purchases made at the restaurant: purchase date, menu items in the purchase and the purchase total
+def purchase_list(request):
+    purchases = Purchase.objects.prefetch_related('menu_items').all()
+    context = {
+        'purchases' : purchases
+    }
+    return render(request, 'inventory/purchases.html', context)
+
 
 #TODO class PurchaseCreate(CreateView):
 '''

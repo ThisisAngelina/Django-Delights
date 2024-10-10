@@ -1,9 +1,33 @@
-{% extends 'base.html' %}
+{% extends 'inventory/base.html' %}
 
 {% block title %}
 Purchases
 {% endblock %}
 
 {% block content %}
-<h1>Django Delights purchases:</h1>
+<h1>Django Delights Menu:</h1>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Purchase date</th>
+            <th>Purchase total</th>
+            <th>Purchase items</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for purchase in purchases %}
+        <tr>
+            <td>{{ purchase.date}}</td>
+            <td>{{ purchase.total }}</td>
+            <td>
+            <ul>
+                {% for item in purchase.menu_items.all %}
+                <li>{{item.name}}</li>
+                {% endfor %}
+            </ul>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
 {% endblock %}
