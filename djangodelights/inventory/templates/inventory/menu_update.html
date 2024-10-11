@@ -1,0 +1,56 @@
+{% extends 'inventory/base.html' %}
+
+{% block content %}
+<h1>Update Menu Item</h1>
+
+<form method="post">
+    {% csrf_token %}
+    
+    <!-- Render the MenuItem fields (name and price) -->
+    {{ form.as_p }}
+
+    <!-- Render the formset fields (for ingredients and quantities) -->
+    <h2>Ingredients and Quantities</h2>
+    {{ formset.management_form }}  <!-- Required for formset handling -->
+    
+    <div id="formset-container">
+        {% for form in formset %}
+        <div class="form-row">
+            <div class="col">
+                {{ form.ingredient.label }} {{ form.ingredient }}
+            </div>
+            <div class="col">
+                {{ form.quantity.label }} {{ form.quantity }}
+            </div>
+            <div class="col">
+                {{ form.DELETE }}  <!-- Checkbox for deleting this form -->
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <!-- Button to add more ingredient forms (if you want this) -->
+    <button type="button" class="btn btn-secondary mt-3" id="add-more">Add Ingredient</button>
+    
+    <button type="submit" class="btn btn-primary mt-3">Update</button>
+</form>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const formsetContainer = document.getElementById('formset-container');
+        const addMoreButton = document.getElementById('add-more');
+        const totalForms = document.getElementById('id_form-TOTAL_FORMS');
+        let formIndex = parseInt(totalForms.value);
+
+        addMoreButton.addEventListener('click', function () {
+            const newForm = formsetContainer.children[0].cloneNode(true);
+            const regex = new RegExp(`form-(\\d+)-`, 'g');
+            newForm.innerHTML = newForm.innerHTML.replace(regex, `form-${formIndex}-`);
+            formsetContainer.appendChild(newForm);
+            formIndex++;
+            totalForms.value = formIndex;
+        });
+    });
+</script>
+
+{% endblock %}

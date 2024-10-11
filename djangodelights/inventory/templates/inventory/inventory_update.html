@@ -1,0 +1,9 @@
+{% extends 'inventory/base.html' %}
+
+{% block content %}
+<h1> Manage Django Delights Inventory:</h1>
+<form method="post">{% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Update" class="btn btn-primary mt-3">
+</form>
+{% endblock %}

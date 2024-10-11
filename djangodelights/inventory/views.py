@@ -1,9 +1,11 @@
 from django.shortcuts import render
 from django.views.generic import ListView
-from django.views.generic.edit import UpdateView
+from django.views.generic.edit import UpdateView, CreateView
 from .models import Ingredient, MenuItem, RecipeRequirement, Purchase
 from datetime import datetime
 from django.urls import reverse_lazy
+from django.forms import inlineformset_factory
+from .forms import MenuItemForm, RecipeRequirementForm
 
 
 #Ingredient view: An inventory of different Ingredients, their available quantity, and their prices per unit
@@ -11,6 +13,13 @@ class InventoryList(ListView):
     model = Ingredient
     template_name = 'inventory/inventory.html' 
     context_object_name = 'ingredients'
+
+#Add a new ingredient
+class InventoryCreateView(CreateView):
+    model = Ingredient
+    fields = '__all__'
+    template_name = 'inventory/inventory_new.html'
+    success_url = reverse_lazy('inventory')
 
 #Update inventory view: allows the restaurant owner to change the quantity of the ingredient manually (if an ingredient goes bad or if the restaurant get a supply of the ingredients)
 class InventoryUpdateView(UpdateView):
@@ -24,6 +33,68 @@ class MenuList(ListView):
     model = MenuItem
     template_name = 'inventory/menu.html'
     context_object_name = 'menu_items'
+
+#Add a new menu item using formset: add the menu items and the associated ingredients + quantities 
+class MenuCreateView(CreateView):
+    model = MenuItem
+    form_class = MenuItemForm
+    template_name = 'inventory/menu_new.html'
+    success_url = reverse_lazy('menu')
+
+    def get_context_data(self, **kwargs):
+        
+        context = super().get_context_data(**kwargs)
+        RecipeFormSet = inlineformset_factory(MenuItem, RecipeRequirement, form=RecipeRequirementForm, extra=4, can_delete=True)
+
+        if self.request.POST:
+            context['formset'] = RecipeFormSet(self.request.POST)
+        else:
+            context['formset'] = RecipeFormSet()
+        return context
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+
+        formset = self.get_context_data()['formset']
+        if formset.is_valid():
+            formset.instance = self.object  
+            formset.save()
+
+        return response
+    
+#Update an existing menu item using formset: edit the menu item and the associated ingredients + quantities 
+class MenuUpdateView(UpdateView):
+    model = MenuItem
+    form_class = MenuItemForm
+    template_name = 'inventory/menu_update.html'
+    success_url = reverse_lazy('menu')
+
+    def get_context_data(self, **kwargs):
+        # Call the parent implementation first to get a context
+        context = super().get_context_data(**kwargs)
+
+        # Create the formset for RecipeRequirement, related to the MenuItem instance
+        RecipeFormSet = inlineformset_factory(MenuItem, RecipeRequirement, form=RecipeRequirementForm, extra=0, can_delete=True)
+
+        # Initialize the formset with the MenuItem instance
+        if self.request.POST:
+            context['formset'] = RecipeFormSet(self.request.POST, instance=self.object)  # Bind the formset with POST data
+        else:
+            context['formset'] = RecipeFormSet(instance=self.object)  # Load the existing data into the formset
+
+        return context
+
+    def form_valid(self, form):
+        # Save the MenuItem first
+        response = super().form_valid(form)
+
+        # Handle the RecipeRequirement formset
+        formset = self.get_context_data()['formset']
+        if formset.is_valid():
+            formset.instance = self.object  # Associate the RecipeRequirements with the updated MenuItem
+            formset.save()
+
+        return response
 
 
 #Ingredients view: A list of the ingredients that each menu item requires (RecipeRequirements)
@@ -69,6 +140,8 @@ def profit_view(request):
             'profit': profit
         } )
     return render(request, 'inventory/profit.html', {'profit_data': profit_data})
+
+
 
 
 
