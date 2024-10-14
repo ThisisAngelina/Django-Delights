@@ -2,7 +2,8 @@ from django.urls import path
 from . import views
 
 app_name = 'inventory'
-urlpatterns = [path('inventory/', views.InventoryList.as_view(), name='inventory'),
+urlpatterns = [path('', views.home_view, name='home'),
+            path('inventory/', views.InventoryList.as_view(), name='inventory'),
             path('inventory/new', views.InventoryCreateView.as_view(), name='inventory_new'),
             path('inventory/<int:pk>/edit/', views.InventoryUpdateView.as_view(), name='inventory_update'),
             path('menu/', views.MenuList.as_view(), name='menu'),

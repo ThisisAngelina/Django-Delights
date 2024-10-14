@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.auth import login
+from django.contrib.auth import login, logout
 from django.contrib import messages
 
 def login_view(request):
@@ -17,3 +17,10 @@ def login_view(request):
         form = AuthenticationForm() #if the request method is GET, render an empty form
     
     return render(request, "authenticate/login.html", {"form": form})
+
+def logout_user():
+    def logout_view(request):
+        logout(request)
+        return redirect('login')
+            
+    
