@@ -151,7 +151,6 @@ class PurchaseCreateView(CreateView):
 
     #override this built-in method to run addiitonal calculations when the form is submitted but before it is saved
     def form_valid(self, form):
-        purchase = self.object 
         menu_items = form.cleaned_data.get('menu_items')
 
         for menu_item in menu_items:
