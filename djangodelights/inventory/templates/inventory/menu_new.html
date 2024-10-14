@@ -7,7 +7,7 @@
     {{ form.as_p }}  <!-- MenuItemForm fields -->
 
     <h2>Ingredients and Quantities</h2>
-    {{ formset.management_form }}  <!-- Required for formset handling -->
+    {{ formset.management_form }}  <!-- Ingredient fields -->
     {% for form in formset %}
         <div class="form-row mt-3">
             <div class="col">

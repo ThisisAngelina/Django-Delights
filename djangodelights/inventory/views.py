@@ -5,7 +5,7 @@ from .models import Ingredient, MenuItem, RecipeRequirement, Purchase
 from datetime import datetime
 from django.urls import reverse_lazy
 from django.forms import inlineformset_factory
-from .forms import MenuItemForm, RecipeRequirementForm
+from .forms import *
 
 
 #Ingredient view: An inventory of different Ingredients, their available quantity, and their prices per unit
@@ -73,7 +73,7 @@ class MenuUpdateView(UpdateView):
         # Call the parent implementation first to get a context
         context = super().get_context_data(**kwargs)
 
-        # Create the formset for RecipeRequirement, related to the MenuItem instance
+        # Adding a custom inline formset model to display the Ingredients next to the relative menu item
         RecipeFormSet = inlineformset_factory(MenuItem, RecipeRequirement, form=RecipeRequirementForm, extra=0, can_delete=True)
 
         # Initialize the formset with the MenuItem instance
@@ -142,18 +142,37 @@ def profit_view(request):
     return render(request, 'inventory/profit.html', {'profit_data': profit_data})
 
 
+class PurchaseCreateView(CreateView):
+    
+    model = Purchase
+    form_class = NewPurchaseForm
+    template_name = 'inventory/purchase_new.html'
+    success_url = reverse_lazy('purchases')
 
+    #override this built-in method to run addiitonal calculations when the form is submitted but before it is saved
+    def form_valid(self, form):
+        purchase = self.object 
+        menu_items = form.cleaned_data.get('menu_items')
 
+        for menu_item in menu_items:
+            recipe_requirements = RecipeRequirement.objects.filter(menu_item=menu_item)
+            for requirement in recipe_requirements:
+            
+                ingredient = requirement.ingredient #access the inventory
+                quantity_needed = requirement.quantity #access the recipes
+                
+                # Make sure we have enough of the ingredient in stock
+                if ingredient.quantity >= quantity_needed:
+                    ingredient.quantity -= quantity_needed
+                    ingredient.save() #update the inventory
+                else:
+                    message = f"Not enough {ingredient.name} in stock to fulfill the order for {menu_item.name}"
+                    return self.render_to_response(self.get_context_data(form=form, message=message))
+        return super().form_valid(form)
 
-
-
-
-
-#TODO class PurchaseCreate(CreateView):
-'''
-TODO record a new purchase, calculating the purchase total
-TODO subtract ingredients from Ingredient
-TODO update revenue, costs and profit
-TODO redirect to the purchase list
-'''
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["message"] = kwargs.get("message", "")
+        return context
 
