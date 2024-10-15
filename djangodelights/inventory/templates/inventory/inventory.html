@@ -17,10 +17,10 @@
             <td>{{ ingredient.name }}</td>
             <td>{{ ingredient.quantity }}</td>
             <td>{{ ingredient.price }}</td>
-            <td><a class="link-primary" href="{% url 'inventory_update' ingredient.pk %}">Manage</a></td>
+            <td><a class="link-primary" href="{% url 'inventory:inventory_update' ingredient.pk %}">Manage</a></td>
         </tr>
         {% endfor %}
     </tbody>
 </table>
-<a href="{% url 'inventory_new' %}" class="btn btn-primary mt-3">Add a new inventory item</a>
+<a href="{% url 'inventory:inventory_new' %}" class="btn btn-primary mt-3">Add a new inventory item</a>
 {% endblock %}

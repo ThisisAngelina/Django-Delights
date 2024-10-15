@@ -37,11 +37,9 @@ def home_view(request):
                 cost += ingredient.price * quantity_needed
 
     profit = revenue - cost
-    context['profit_data'].append({
-            'revenue' : revenue,
-            'cost': cost,
-            'profit': profit
-        })
+    context['revenue'] = revenue
+    context['cost'] = cost
+    context['profit'] = profit
 
     #geting hold of the user that is logged in
     context['username'] = request.user.username

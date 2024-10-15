@@ -5,14 +5,13 @@ Home - Django Delights
 {% endblock %}
 
 {% block content %}
-<h1>Welcome to Django Delights, {{ context.username }}!</h1>
+<h1>Welcome to Django Delights, {{ username }}!</h1>
 <h2> This month's financials are:</h2>
 <div>
 <ul class="mb-5">
-    <li> Revenue: {{ context.revenue }}</li>
-    <li> Expenses: {{ context.cost }}</li>
-    <li> Profit: {{ context.profit }}</li>
-</ul>
+    <li> Revenue: $ {{ revenue }}</li>
+    <li> Expenses: $ {{ cost }}</li>
+    <li> Profit: $ {{ profit }}</li>
 </div>
 <h2> Navigate to:</h2>
 <div>

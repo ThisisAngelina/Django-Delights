@@ -18,9 +18,8 @@ def login_view(request):
     
     return render(request, "authenticate/login.html", {"form": form})
 
-def logout_user():
-    def logout_view(request):
-        logout(request)
-        return redirect('login')
+def logout_view(request):
+    logout(request)
+    return redirect('authenticate:login')
             
     
